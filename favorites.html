@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>TourGuide - Guia de Lugares Turísticos</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Favoritos - TourGuide</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link href="css/styles.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link href="css/styles.css" rel="stylesheet">
 </head>
 <body>
     <!-- Header -->
     <header class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="index.html">
                 <img src="img/logo.png" alt="Logo" height="30">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -24,10 +26,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
+                        <a class="nav-link" href="index.html">Início</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="#" id="btnCadastroItem" style="display: none;">Cadastrar Item</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" id="btnFavoritos" style="display: none;">Favoritos</a>
+                        <a class="nav-link active" href="favorites.html" id="btnFavoritos" style="display: none;">Favoritos</a>
                     </li>
                 </ul>
                 <div class="d-flex">
@@ -40,72 +45,36 @@
 
     <!-- Main Content -->
     <main>
-        <!-- Carousel Section -->
-        <section class="carousel-section py-4">
-            <div class="container">
-                <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        <!-- Carousel items will be inserted here -->
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon"></span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon"></span>
-                    </button>
+        <div class="container py-5">
+            <div class="row mb-4">
+                <div class="col">
+                    <h1 class="display-5 mb-3">Meus Lugares Favoritos</h1>
+                    <p class="text-muted" id="emptyMessage" style="display: none;">
+                        Você ainda não tem lugares favoritos. Explore nossos <a href="index.html">destinos turísticos</a> e marque seus favoritos!
+                    </p>
                 </div>
             </div>
-        </section>
+            <div class="row" id="favoritesContainer">
+                <!-- Favorite cards will be inserted here -->
+            </div>
+        </div>
+    </main>
 
-        <!-- Search and Cards Section -->
-        <section class="cards-section py-4 bg-light">
-            <div class="container">
-                <div class="search-bar mb-4">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Pesquisar...">
-                        <button class="btn btn-primary" id="searchButton">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
+    <!-- Item Details Modal -->
+    <div class="modal fade" id="itemDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalhes do Local</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="row" id="cardsContainer">
-                    <!-- Cards will be inserted here -->
+                <div class="modal-body" id="itemDetailsContent">
+                    <!-- Item details will be inserted here -->
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
 
-        <!-- Advanced Visualization Section -->
-        <section class="advanced-viz-section py-4">
-            <div class="container">
-                <div id="mapContainer" style="height: 400px;">
-                    <!-- Map will be inserted here -->
-                </div>
-            </div>
-        </section>
-
-        <!-- Author Info Section -->
-        <section class="author-section py-4 bg-light">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-md-4 text-center">
-                        <img src="img/author.jpg" alt="Autor" class="rounded-circle img-fluid mb-3" style="max-width: 200px;">
-                    </div>
-                    <div class="col-md-8">
-                        <h2>Sobre o Autor</h2>
-                        <h3>Nome Completo</h3>
-                        <p class="minibio">Minibio do autor...</p>
-                        <p>Curso: Seu Curso</p>
-                        <p>Turma: Sua Turma</p>
-                        <div class="social-links">
-                            <a href="#" class="me-3"><i class="fab fa-github"></i></a>
-                            <a href="#" class="me-3"><i class="fab fa-linkedin"></i></a>
-                            <a href="#" class="me-3"><i class="fab fa-twitter"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>    <!-- Modals -->
     <!-- Login Modal -->
     <div class="modal fade" id="loginModal" tabindex="-1">
         <div class="modal-dialog">
@@ -124,22 +93,20 @@
                             <label for="loginUsername" class="form-label">Usuário</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                <input type="text" class="form-control" id="loginUsername" required placeholder="Digite seu usuário">
+                                <input type="text" class="form-control" id="loginUsername" required>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="loginPassword" class="form-label">Senha</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input type="password" class="form-control" id="loginPassword" required placeholder="Digite sua senha">
+                                <input type="password" class="form-control" id="loginPassword" required>
                             </div>
                         </div>
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-sign-in-alt me-2"></i>Entrar
-                            </button>
+                            <button type="submit" class="btn btn-primary">Entrar</button>
                             <button type="button" class="btn btn-outline-secondary" id="btnShowRegister">
-                                <i class="fas fa-user-plus me-2"></i>Criar nova conta
+                                Criar nova conta
                             </button>
                         </div>
                     </form>
@@ -159,37 +126,35 @@
                 <div class="modal-body">
                     <form id="registerForm">
                         <div class="mb-3">
-                            <label for="registerName" class="form-label">Nome Completo</label>
+                            <label for="registerName" class="form-label">Nome</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                <input type="text" class="form-control" id="registerName" required placeholder="Digite seu nome completo">
+                                <input type="text" class="form-control" id="registerName" required>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="registerUsername" class="form-label">Usuário</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-at"></i></span>
-                                <input type="text" class="form-control" id="registerUsername" required placeholder="Escolha um nome de usuário">
+                                <input type="text" class="form-control" id="registerUsername" required>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="registerEmail" class="form-label">Email</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                <input type="email" class="form-control" id="registerEmail" required placeholder="Digite seu email">
+                                <input type="email" class="form-control" id="registerEmail" required>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="registerPassword" class="form-label">Senha</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input type="password" class="form-control" id="registerPassword" required placeholder="Crie uma senha">
+                                <input type="password" class="form-control" id="registerPassword" required>
                             </div>
                         </div>
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-success">
-                                <i class="fas fa-user-plus me-2"></i>Criar Conta
-                            </button>
+                            <button type="submit" class="btn btn-success">Criar Conta</button>
                         </div>
                     </form>
                 </div>
@@ -209,27 +174,10 @@
         </div>
     </div>
 
-    <!-- Item Details Modal -->
-    <div class="modal fade" id="itemDetailsModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Detalhes do Item</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" id="itemDetailsContent">
-                    <!-- Item details will be inserted here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Leaflet for maps -->
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />    <!-- Custom JS -->
+    <!-- Custom JS -->
     <script src="js/auth.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/favorites.js"></script>
 </body>
 </html>

@@ -7,10 +7,52 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
 });
 
+// API functions
+async function getItems() {
+    const response = await fetch('http://localhost:3000/itens');
+    return await response.json();
+}
+
+async function getFeaturedItems() {
+    const response = await fetch('http://localhost:3000/itens?destaque=true');
+    return await response.json();
+}
+
+async function getItemById(id) {
+    const response = await fetch(`http://localhost:3000/itens/${id}`);
+    return await response.json();
+}
+
+async function getFavorites(userId) {
+    const response = await fetch(`http://localhost:3000/favoritos?userId=${userId}`);
+    return await response.json();
+}
+
+async function addFavorite(userId, itemId) {
+    const response = await fetch('http://localhost:3000/favoritos', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            id: crypto.randomUUID(),
+            userId,
+            itemId
+        })
+    });
+    return await response.json();
+}
+
+async function removeFavorite(favoriteId) {
+    await fetch(`http://localhost:3000/favoritos/${favoriteId}`, {
+        method: 'DELETE'
+    });
+}
+
 // Carousel Management
 async function initializeCarousel() {
     try {
-        const featuredItems = await db.getFeaturedItems();
+        const featuredItems = await getFeaturedItems();
         const carouselInner = document.querySelector('.carousel-inner');
         
         featuredItems.forEach((item, index) => {
@@ -33,7 +75,7 @@ async function initializeCarousel() {
 // Cards Management
 async function loadCards(searchTerm = '') {
     try {
-        const items = await db.getItems();
+        const items = await getItems();
         const filteredItems = searchTerm
             ? items.filter(item => 
                 item.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -84,10 +126,8 @@ function initializeMap() {
     const map = L.map('mapContainer').setView([-19.9167, -43.9345], 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-
-    // Add markers for items with locations
-    db.getItems().then(items => {
+    }).addTo(map);    // Add markers for items with locations
+    getItems().then(items => {
         items.forEach(item => {
             if (item.latitude && item.longitude) {
                 L.marker([item.latitude, item.longitude])
@@ -99,10 +139,9 @@ function initializeMap() {
 }
 
 // Favorites Management
-async function updateFavoriteIcons() {
-    if (!auth.isLoggedIn()) return;
+async function updateFavoriteIcons() {    if (!auth.isLoggedIn()) return;
 
-    const favorites = await db.getFavorites(auth.currentUser.id);
+    const favorites = await getFavorites(auth.currentUser.id);
     const favoriteButtons = document.querySelectorAll('.favorite-btn');
 
     favoriteButtons.forEach(btn => {
@@ -127,13 +166,13 @@ async function toggleFavorite(itemId) {
     }
 
     try {
-        const favorites = await db.getFavorites(auth.currentUser.id);
+        const favorites = await getFavorites(auth.currentUser.id);
         const existingFavorite = favorites.find(fav => fav.itemId === itemId);
 
         if (existingFavorite) {
-            await db.removeFavorite(existingFavorite.id);
+            await removeFavorite(existingFavorite.id);
         } else {
-            await db.addFavorite(auth.currentUser.id, itemId);
+            await addFavorite(auth.currentUser.id, itemId);
         }
 
         updateFavoriteIcons();
@@ -204,29 +243,73 @@ function setupEventListeners() {
         if (e.target.classList.contains('view-details')) {
             const itemId = e.target.dataset.itemId;
             try {
-                const item = await db.getItemById(itemId);
+                const item = await getItemById(itemId);
                 const modalContent = document.getElementById('itemDetailsContent');                modalContent.innerHTML = `
                     <div class="row">
                         <div class="col-md-6">
-                            <img src="${item.imagem}" class="img-fluid" alt="${item.nome}">
+                            <img src="${item.imagem}" class="img-fluid rounded" alt="${item.nome}">
+                            <div class="image-gallery mt-3">
+                                ${item.imagensAdicionais ? item.imagensAdicionais.map(img => 
+                                    `<img src="${img}" alt="Imagem adicional de ${item.nome}" onclick="this.parentElement.previousElementSibling.src = this.src">`
+                                ).join('') : ''}
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <h3>${item.nome}</h3>
-                            <p class="text-muted">${item.endereco}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h3>${item.nome}</h3>
+                                <div>
+                                    <span class="rating-stars">
+                                        ${'★'.repeat(Math.floor(item.avaliacao))}${item.avaliacao % 1 >= 0.5 ? '½' : ''}
+                                    </span>
+                                    <span class="rating-count">(${item.numeroAvaliacoes.toLocaleString()} avaliações)</span>
+                                </div>
+                            </div>
+                            <p class="text-muted"><i class="fas fa-map-marker-alt me-2"></i>${item.endereco}</p>
                             <p>${item.descricao}</p>
-                            <div class="mt-4">
-                                <h5>Informações</h5>
+                            
+                            <div class="info-section">
+                                <h5>Informações Principais</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><i class="far fa-clock me-2"></i> <strong>Horário:</strong> ${item.horarioFuncionamento}</p>
+                                        <p><i class="fas fa-ticket-alt me-2"></i> <strong>Entrada:</strong> ${item.precoEntrada}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><i class="fas fa-calendar-alt me-2"></i> <strong>Melhor época:</strong> ${item.melhorEpoca}</p>
+                                        <p><i class="fas fa-temperature-high me-2"></i> <strong>Clima:</strong> ${item.clima}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="info-section">
+                                <h5>Dicas para Visitantes</h5>
                                 <ul class="list-unstyled">
-                                    <li><i class="far fa-clock me-2"></i> <strong>Horário:</strong> ${item.horarioFuncionamento}</li>
-                                    <li><i class="fas fa-ticket-alt me-2"></i> <strong>Entrada:</strong> ${item.precoEntrada}</li>
-                                    <li><i class="fas fa-map-marker-alt me-2"></i> <strong>Cidade:</strong> ${item.cidade} - ${item.estado}</li>
+                                    ${item.dicas ? item.dicas.map(dica => 
+                                        `<li><i class="fas fa-check-circle me-2 text-success"></i>${dica}</li>`
+                                    ).join('') : ''}
                                 </ul>
                             </div>
-                            <div class="mt-4">
+
+                            <div class="info-section">
+                                <h5>Infraestrutura</h5>
+                                <div class="d-flex flex-wrap gap-3">
+                                    ${item.infraestrutura ? item.infraestrutura.map(infra => 
+                                        `<span class="badge bg-light text-dark p-2">
+                                            <i class="fas fa-check me-1 text-success"></i>${infra}
+                                        </span>`
+                                    ).join('') : ''}
+                                </div>
+                            </div>
+
+                            <div class="info-section">
                                 <h5>Atrações</h5>
-                                <ul>
-                                    ${item.atracoes.map(atracao => `<li>${atracao}</li>`).join('')}
-                                </ul>
+                                <div class="row">
+                                    ${item.atracoes.map(atracao => 
+                                        `<div class="col-md-6">
+                                            <p><i class="fas fa-star me-2 text-warning"></i>${atracao}</p>
+                                        </div>`
+                                    ).join('')}
+                                </div>
                             </div>
                         </div>
                     </div>
