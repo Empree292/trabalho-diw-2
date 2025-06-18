@@ -1,0 +1,156 @@
+{
+    "usuarios": [
+        {
+            "id": "187cb7e5-e097-4224-8bc7-b610c855e2b1",
+            "login": "admin",
+            "senha": "123",
+            "nome": "Administrador do Sistema",
+            "email": "admin@exemplo.com",
+            "admin": true
+        }
+    ],    "itens": [
+        {
+            "id": "1",
+            "nome": "Cristo Redentor",
+            "descricao": "Um dos pontos turísticos mais famosos do Brasil, o Cristo Redentor é uma estátua art déco que retrata Jesus Cristo, localizada no topo do morro do Corcovado.",
+            "imagem": "https://upload.wikimedia.org/wikipedia/commons/8/87/Cristo_Redentor_-_Rio_de_Janeiro%2C_Brazil.jpg",
+            "destaque": true,
+            "latitude": -22.951916,
+            "longitude": -43.2104872,
+            "horarioFuncionamento": "8:00 - 19:00",
+            "precoEntrada": "R$ 70,00",
+            "atracoes": [
+                "Vista panorâmica do Rio de Janeiro",
+                "Estátua do Cristo Redentor",
+                "Capela Nossa Senhora Aparecida"
+            ],
+            "endereco": "Parque Nacional da Tijuca - Alto da Boa Vista, Rio de Janeiro - RJ",
+            "cidade": "Rio de Janeiro",
+            "estado": "RJ"
+        },
+        {
+            "id": "2",
+            "nome": "Pão de Açúcar",
+            "descricao": "O Pão de Açúcar é um complexo de morros localizado no bairro da Urca. O bondinho é uma das principais atrações turísticas do Rio de Janeiro.",
+            "imagem": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Sugarloaf_Mountain_Cable_Car.jpg",
+            "destaque": true,
+            "latitude": -22.9492586,
+            "longitude": -43.1545757,
+            "horarioFuncionamento": "8:00 - 21:00",
+            "precoEntrada": "R$ 120,00",
+            "atracoes": [
+                "Bondinho",
+                "Vista panorâmica",
+                "Restaurantes",
+                "Lojas de souvenirs"
+            ],
+            "endereco": "Av. Pasteur, 520 - Urca, Rio de Janeiro - RJ",
+            "cidade": "Rio de Janeiro",
+            "estado": "RJ"
+        },
+        {
+            "id": "3",
+            "nome": "Cataratas do Iguaçu",
+            "descricao": "As Cataratas do Iguaçu são quedas d'água localizadas no Parque Nacional do Iguaçu. São um conjunto de cerca de 275 quedas de água no Rio Iguaçu.",
+            "imagem": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Iguazu_Falls.jpg",
+            "destaque": true,
+            "latitude": -25.695259,
+            "longitude": -54.436756,
+            "horarioFuncionamento": "9:00 - 17:00",
+            "precoEntrada": "R$ 90,00",
+            "atracoes": [
+                "Passeio de barco",
+                "Trilhas ecológicas",
+                "Mirante",
+                "Centro de visitantes"
+            ],
+            "endereco": "Parque Nacional do Iguaçu - Foz do Iguaçu - PR",
+            "cidade": "Foz do Iguaçu",
+            "estado": "PR"
+        },
+        {
+            "id": "4",
+            "nome": "Pelourinho",
+            "descricao": "O Pelourinho é o centro histórico de Salvador, com construções do período colonial brasileiro. É conhecido por sua arquitetura portuguesa preservada do século XVI.",
+            "imagem": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Pelourinho_Salvador_Bahia.jpg",
+            "destaque": true,
+            "latitude": -12.973619,
+            "longitude": -38.510187,
+            "horarioFuncionamento": "24 horas",
+            "precoEntrada": "Gratuito",
+            "atracoes": [
+                "Igrejas históricas",
+                "Museus",
+                "Apresentações culturais",
+                "Restaurantes típicos",
+                "Lojas de artesanato"
+            ],
+            "endereco": "R. das Laranjeiras, s/n - Pelourinho, Salvador - BA",
+            "cidade": "Salvador",
+            "estado": "BA"
+        },
+        {
+            "id": "5",
+            "nome": "Teatro Amazonas",
+            "descricao": "O Teatro Amazonas é um dos principais teatros do Brasil e o principal cartão-postal da cidade de Manaus. Foi construído durante o ciclo da borracha.",
+            "imagem": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Teatro_Amazonas_-_AM.jpg",
+            "destaque": false,
+            "latitude": -3.130278,
+            "longitude": -60.023333,
+            "horarioFuncionamento": "9:00 - 17:00",
+            "precoEntrada": "R$ 20,00",
+            "atracoes": [
+                "Visita guiada",
+                "Apresentações artísticas",
+                "Exposições",
+                "Museu do Teatro"
+            ],
+            "endereco": "Av. Eduardo Ribeiro, s/n - Centro, Manaus - AM",
+            "cidade": "Manaus",
+            "estado": "AM"
+        },
+        {
+            "id": "6",
+            "nome": "Centro Histórico de Ouro Preto",
+            "descricao": "Ouro Preto é uma cidade histórica conhecida por sua arquitetura colonial portuguesa e igrejas barrocas. Foi a primeira cidade brasileira a ser considerada Patrimônio Mundial pela UNESCO.",
+            "imagem": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Ouro_Preto_-_Minas_Gerais.jpg/1280px-Ouro_Preto_-_Minas_Gerais.jpg",
+            "destaque": false,
+            "latitude": -20.385,
+            "longitude": -43.504167,
+            "horarioFuncionamento": "24 horas",
+            "precoEntrada": "Gratuito",
+            "atracoes": [
+                "Igreja São Francisco de Assis",
+                "Museu da Inconfidência",
+                "Mina do Chico Rei",
+                "Casa dos Contos",
+                "Praça Tiradentes"
+            ],
+            "endereco": "Centro Histórico, Ouro Preto - MG",
+            "cidade": "Ouro Preto",
+            "estado": "MG"
+        },
+        {
+            "id": "7",
+            "nome": "Parque Nacional da Chapada dos Veadeiros",
+            "descricao": "O Parque Nacional da Chapada dos Veadeiros é uma unidade de conservação brasileira conhecida por suas formações rochosas antigas, cachoeiras e paisagens deslumbrantes.",
+            "imagem": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Chapada_dos_Veadeiros.jpg/1280px-Chapada_dos_Veadeiros.jpg",
+            "destaque": false,
+            "latitude": -14.050556,
+            "longitude": -47.628889,
+            "horarioFuncionamento": "8:00 - 18:00",
+            "precoEntrada": "R$ 30,00",
+            "atracoes": [
+                "Cachoeira dos Saltos",
+                "Vale da Lua",
+                "Trilhas ecológicas",
+                "Mirantes",
+                "Canyon"
+            ],
+            "endereco": "Alto Paraíso de Goiás - GO",
+            "cidade": "Alto Paraíso de Goiás",
+            "estado": "GO"
+        }
+    ],
+    "favoritos": []
+}

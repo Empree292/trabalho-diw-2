@@ -1,0 +1,98 @@
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Carousel Section */
+.carousel-section {
+    background-color: #f8f9fa;
+}
+
+.carousel-item {
+    height: 400px;
+    background-size: cover;
+    background-position: center;
+}
+
+.carousel-item .carousel-caption {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 5px;
+}
+
+/* Cards Section */
+.card {
+    transition: transform 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.favorite-btn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background-color: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.favorite-btn:hover {
+    transform: scale(1.1);
+}
+
+.favorite-btn i {
+    color: #dc3545;
+}
+
+/* Advanced Visualization Section */
+#mapContainer {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Author Section */
+.author-section img {
+    border: 5px solid white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.social-links a {
+    color: #333;
+    font-size: 1.5em;
+    transition: color 0.3s ease;
+}
+
+.social-links a:hover {
+    color: #007bff;
+}
+
+/* Search Bar */
+.search-bar {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .carousel-item {
+        height: 300px;
+    }
+
+    .author-section img {
+        max-width: 150px;
+    }
+}
