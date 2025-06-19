@@ -9,44 +9,69 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // API functions
 async function getItems() {
-    const response = await fetch('http://localhost:3000/itens');
+    const response = await fetch('/itens');
     return await response.json();
 }
 
 async function getFeaturedItems() {
-    const response = await fetch('http://localhost:3000/itens?destaque=true');
+    const response = await fetch('/itens?destaque=true');
     return await response.json();
 }
 
 async function getItemById(id) {
-    const response = await fetch(`http://localhost:3000/itens/${id}`);
+    const response = await fetch(`/itens/${id}`);
     return await response.json();
 }
 
-async function getFavorites(userId) {
-    const response = await fetch(`http://localhost:3000/favoritos?userId=${userId}`);
-    return await response.json();
+async function getUserFavorites(userId) {
+    try {
+        const response = await fetch(`/usuarios/${userId}`);
+        const user = await response.json();
+        return user.favorites || [];
+    } catch (error) {
+        console.error('Erro ao carregar favoritos:', error);
+        return [];
+    }
 }
 
-async function addFavorite(userId, itemId) {
-    const response = await fetch('http://localhost:3000/favoritos', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            id: crypto.randomUUID(),
-            userId,
-            itemId
-        })
-    });
-    return await response.json();
-}
+async function toggleFavoriteForUser(userId, itemId) {
+    try {
+        // Get current user data
+        const response = await fetch(`/usuarios/${userId}`);
+        const user = await response.json();
+        
+        // Get current favorites
+        const favorites = user.favorites || [];
+        
+        // Toggle favorite
+        const index = favorites.indexOf(itemId);
+        if (index === -1) {
+            favorites.push(itemId);
+        } else {
+            favorites.splice(index, 1);
+        }
+        
+        // Update user favorites in API
+        await fetch(`/usuarios/${userId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                favorites: favorites
+            })
+        });
 
-async function removeFavorite(favoriteId) {
-    await fetch(`http://localhost:3000/favoritos/${favoriteId}`, {
-        method: 'DELETE'
-    });
+        // Update user in sessionStorage
+        const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+        currentUser.favorites = favorites;
+        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+        return favorites;
+    } catch (error) {
+        console.error('Erro ao atualizar favoritos:', error);
+        throw error;
+    }
 }
 
 // Carousel Management
@@ -139,47 +164,188 @@ function initializeMap() {
 }
 
 // Favorites Management
-async function updateFavoriteIcons() {    if (!auth.isLoggedIn()) return;
+async function updateFavoriteIcons() {
+    if (!auth.isLoggedIn()) {
+        // Se não estiver logado, garante que todos os ícones estão no estado padrão
+        document.querySelectorAll('.favorite-btn i').forEach(icon => {
+            icon.className = 'far fa-heart';
+            icon.style.color = '#000000';
+        });
+        return;
+    }
 
-    const favorites = await getFavorites(auth.currentUser.id);
+    const user = auth.currentUser;
+    const favorites = user.favorites || [];  // Usa os favoritos do sessionStorage
     const favoriteButtons = document.querySelectorAll('.favorite-btn');
 
     favoriteButtons.forEach(btn => {
         const itemId = btn.dataset.itemId;
-        const isFavorite = favorites.some(fav => fav.itemId === itemId);
+        const isFavorite = favorites.includes(itemId);
         const icon = btn.querySelector('i');
         
         if (isFavorite) {
-            icon.classList.remove('far');
-            icon.classList.add('fas');
+            icon.className = 'fas fa-heart';
+            icon.style.color = '#ff0000';
         } else {
-            icon.classList.remove('fas');
-            icon.classList.add('far');
+            icon.className = 'far fa-heart';
+            icon.style.color = '#000000';
         }
+
+        // Garante que o botão está clicável
+        btn.style.pointerEvents = 'auto';
     });
 }
 
-async function toggleFavorite(itemId) {
+async function toggleFavorite(itemId, button) {
     if (!auth.isLoggedIn()) {
         $('#loginModal').modal('show');
         return;
     }
 
+    const icon = button.querySelector('i');
+    const originalIcon = icon.className;
+    const originalColor = icon.style.color;
+
     try {
-        const favorites = await getFavorites(auth.currentUser.id);
-        const existingFavorite = favorites.find(fav => fav.itemId === itemId);
+        // Show loading state
+        icon.className = 'fas fa-spinner fa-spin';
+        button.style.pointerEvents = 'none';
 
-        if (existingFavorite) {
-            await removeFavorite(existingFavorite.id);
-        } else {
-            await addFavorite(auth.currentUser.id, itemId);
-        }
-
-        updateFavoriteIcons();
-    } catch (error) {
+        const favorites = await toggleFavoriteForUser(auth.currentUser.id, itemId);
+        const isFavorite = favorites.includes(itemId);
+        
+        // Atualiza o ícone específico do botão
+        icon.className = isFavorite ? 'fas fa-heart' : 'far fa-heart';
+        icon.style.color = isFavorite ? '#ff0000' : '#000000';
+        
+        // Show a toast notification
+        const toast = new bootstrap.Toast(document.getElementById('favoriteToast'));
+        const toastBody = document.getElementById('favoriteToastBody');
+        
+        toastBody.textContent = isFavorite 
+            ? 'Local adicionado aos favoritos!'
+            : 'Local removido dos favoritos!';
+            
+        toast.show();    } catch (error) {
         console.error('Erro ao atualizar favoritos:', error);
+        
+        // Revert icon to original state
+        icon.className = originalIcon;
+        icon.style.color = originalColor;
+        button.style.pointerEvents = 'auto';
+
+        // Show error toast instead of alert
+        const toast = new bootstrap.Toast(document.getElementById('favoriteToast'));
+        const toastBody = document.getElementById('favoriteToastBody');
+        toastBody.textContent = 'Erro ao atualizar favoritos. Tente novamente.';
+        toast.show();
     }
 }
+
+// Função global para mostrar detalhes do item (tolerante a campos ausentes)
+window.showItemDetails = function(item) {
+    const itemDetailsContent = document.getElementById('itemDetailsContent');
+    if (!itemDetailsContent) return;
+    itemDetailsContent.innerHTML = `
+        <div class="row">
+            <div class="col-md-6">
+                <img src="${item.imagem || ''}" class="img-fluid rounded" alt="${item.nome || ''}" 
+                     style="width: 100%; height: 300px; object-fit: cover;">
+                ${(Array.isArray(item.imagensAdicionais) && item.imagensAdicionais.length > 0) ? `
+                    <div class="image-gallery mt-3 d-flex gap-2 overflow-auto">
+                        ${(item.imagensAdicionais || []).map(img => `
+                            <img src="${img}" alt="${item.nome || ''}" 
+                                 style="width: 80px; height: 60px; object-fit: cover; cursor: pointer;"
+                                 onclick="document.querySelector('#itemDetailsContent .img-fluid').src = this.src">
+                        `).join('')}
+                    </div>
+                ` : ''}
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3>${item.nome || ''}</h3>
+                    <div class="rating text-warning">
+                        ${'★'.repeat(Math.floor(item.avaliacao || 0))}${(item.avaliacao && item.avaliacao % 1 >= 0.5) ? '½' : ''}
+                        <small class="text-muted">(${typeof item.numeroAvaliacoes === 'number' ? item.numeroAvaliacoes.toLocaleString() : '0'})</small>
+                    </div>
+                </div>
+                <p class="text-muted">
+                    <i class="fas fa-map-marker-alt me-2"></i>${item.endereco || ''}
+                </p>
+                <p>${item.descricao || ''}</p>
+                <div class="info-section mt-4">
+                    <h5>Informações</h5>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="bg-light p-2 rounded">
+                                <i class="far fa-clock me-2"></i>
+                                <strong>Horário:</strong><br>
+                                ${item.horarioFuncionamento || ''}
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="bg-light p-2 rounded">
+                                <i class="fas fa-ticket-alt me-2"></i>
+                                <strong>Entrada:</strong><br>
+                                ${item.precoEntrada || ''}
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="bg-light p-2 rounded">
+                                <i class="fas fa-calendar-alt me-2"></i>
+                                <strong>Melhor época:</strong><br>
+                                ${item.melhorEpoca || ''}
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="bg-light p-2 rounded">
+                                <i class="fas fa-temperature-high me-2"></i>
+                                <strong>Clima:</strong><br>
+                                ${item.clima || ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="info-section mt-4">
+                    <h5>Dicas para Visitantes</h5>
+                    <div class="row">
+                        ${(Array.isArray(item.dicas) ? item.dicas : []).map(dica => `
+                            <div class="col-12 mb-2">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>${dica}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="info-section mt-4">
+                    <h5>Infraestrutura</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        ${(Array.isArray(item.infraestrutura) ? item.infraestrutura : []).map(infra => `
+                            <span class="badge bg-light text-dark p-2">
+                                <i class="fas fa-check text-success me-1"></i>${infra}
+                            </span>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="info-section mt-4">
+                    <h5>Atrações</h5>
+                    <div class="row">
+                        ${(Array.isArray(item.atracoes) ? item.atracoes : []).map(atracao => `
+                            <div class="col-md-6 mb-2">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-star text-warning me-2"></i>
+                                    <span>${atracao}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+};
 
 // Event Listeners
 function setupEventListeners() {
@@ -192,6 +358,7 @@ function setupEventListeners() {
                 document.getElementById('loginPassword').value
             );
             $('#loginModal').modal('hide');
+            updateFavoriteIcons(); // Atualiza os ícones após login
         } catch (error) {
             alert(error.message);
         }
@@ -205,7 +372,8 @@ function setupEventListeners() {
                 nome: document.getElementById('registerName').value,
                 login: document.getElementById('registerUsername').value,
                 email: document.getElementById('registerEmail').value,
-                senha: document.getElementById('registerPassword').value
+                senha: document.getElementById('registerPassword').value,
+                favorites: [] // Inicializa array de favoritos
             });
             $('#registerModal').modal('hide');
         } catch (error) {
@@ -216,12 +384,23 @@ function setupEventListeners() {
     // Logout Button
     document.getElementById('btnLogout').addEventListener('click', () => {
         auth.logout();
+        updateFavoriteIcons(); // Atualiza os ícones após logout
     });
 
     // Show Register Modal
     document.getElementById('btnShowRegister').addEventListener('click', () => {
         $('#loginModal').modal('hide');
         $('#registerModal').modal('show');
+    });
+
+    // Favoritos Button
+    document.getElementById('btnFavoritos').addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!auth.isLoggedIn()) {
+            $('#loginModal').modal('show');
+            return;
+        }
+        window.location.href = 'favorites.html';
     });
 
     // Search
@@ -231,10 +410,12 @@ function setupEventListeners() {
     });
 
     // Favorite Buttons
-    document.addEventListener('click', (e) => {
-        if (e.target.closest('.favorite-btn')) {
-            const btn = e.target.closest('.favorite-btn');
-            toggleFavorite(btn.dataset.itemId);
+    document.addEventListener('click', async (e) => {
+        const favoriteBtn = e.target.closest('.favorite-btn');
+        if (favoriteBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            await toggleFavorite(favoriteBtn.dataset.itemId, favoriteBtn);
         }
     });
 
@@ -244,80 +425,13 @@ function setupEventListeners() {
             const itemId = e.target.dataset.itemId;
             try {
                 const item = await getItemById(itemId);
-                const modalContent = document.getElementById('itemDetailsContent');                modalContent.innerHTML = `
-                    <div class="row">
-                        <div class="col-md-6">
-                            <img src="${item.imagem}" class="img-fluid rounded" alt="${item.nome}">
-                            <div class="image-gallery mt-3">
-                                ${item.imagensAdicionais ? item.imagensAdicionais.map(img => 
-                                    `<img src="${img}" alt="Imagem adicional de ${item.nome}" onclick="this.parentElement.previousElementSibling.src = this.src">`
-                                ).join('') : ''}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h3>${item.nome}</h3>
-                                <div>
-                                    <span class="rating-stars">
-                                        ${'★'.repeat(Math.floor(item.avaliacao))}${item.avaliacao % 1 >= 0.5 ? '½' : ''}
-                                    </span>
-                                    <span class="rating-count">(${item.numeroAvaliacoes.toLocaleString()} avaliações)</span>
-                                </div>
-                            </div>
-                            <p class="text-muted"><i class="fas fa-map-marker-alt me-2"></i>${item.endereco}</p>
-                            <p>${item.descricao}</p>
-                            
-                            <div class="info-section">
-                                <h5>Informações Principais</h5>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <p><i class="far fa-clock me-2"></i> <strong>Horário:</strong> ${item.horarioFuncionamento}</p>
-                                        <p><i class="fas fa-ticket-alt me-2"></i> <strong>Entrada:</strong> ${item.precoEntrada}</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p><i class="fas fa-calendar-alt me-2"></i> <strong>Melhor época:</strong> ${item.melhorEpoca}</p>
-                                        <p><i class="fas fa-temperature-high me-2"></i> <strong>Clima:</strong> ${item.clima}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="info-section">
-                                <h5>Dicas para Visitantes</h5>
-                                <ul class="list-unstyled">
-                                    ${item.dicas ? item.dicas.map(dica => 
-                                        `<li><i class="fas fa-check-circle me-2 text-success"></i>${dica}</li>`
-                                    ).join('') : ''}
-                                </ul>
-                            </div>
-
-                            <div class="info-section">
-                                <h5>Infraestrutura</h5>
-                                <div class="d-flex flex-wrap gap-3">
-                                    ${item.infraestrutura ? item.infraestrutura.map(infra => 
-                                        `<span class="badge bg-light text-dark p-2">
-                                            <i class="fas fa-check me-1 text-success"></i>${infra}
-                                        </span>`
-                                    ).join('') : ''}
-                                </div>
-                            </div>
-
-                            <div class="info-section">
-                                <h5>Atrações</h5>
-                                <div class="row">
-                                    ${item.atracoes.map(atracao => 
-                                        `<div class="col-md-6">
-                                            <p><i class="fas fa-star me-2 text-warning"></i>${atracao}</p>
-                                        </div>`
-                                    ).join('')}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
+                showItemDetails(item);
                 $('#itemDetailsModal').modal('show');
             } catch (error) {
                 console.error('Erro ao carregar detalhes do item:', error);
+                alert('Erro ao carregar detalhes. Tente novamente.');
             }
         }
     });
 }
+

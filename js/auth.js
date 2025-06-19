@@ -108,7 +108,7 @@ class AuthManager {
         }
     }    async login(username, password) {
         try {
-            const response = await fetch(`http://localhost:3000/usuarios?login=${username}`);
+            const response = await fetch(`/usuarios?login=${username}`);
             const users = await response.json();
             const user = users[0];
             
@@ -135,7 +135,7 @@ class AuthManager {
     async register(userData) {
         try {
             // Check if user already exists
-            const response = await fetch(`http://localhost:3000/usuarios?login=${userData.login}`);
+            const response = await fetch(`/usuarios?login=${userData.login}`);
             const existingUsers = await response.json();
             
             if (existingUsers.length > 0) {
@@ -146,10 +146,11 @@ class AuthManager {
             const newUser = {
                 ...userData,
                 id: crypto.randomUUID(),
-                admin: false
+                admin: false,
+                favorites: []  // Initialize empty favorites array
             };
 
-            const createResponse = await fetch('http://localhost:3000/usuarios', {
+            const createResponse = await fetch('/usuarios', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -191,24 +192,24 @@ class AuthManager {
     updateUIForLoggedUser() {
         const btnLogin = document.getElementById('btnLogin');
         const btnLogout = document.getElementById('btnLogout');
-        const btnFavoritos = document.getElementById('btnFavoritos');
         const btnCadastroItem = document.getElementById('btnCadastroItem');
+        const btnFavoritos = document.getElementById('btnFavoritos');
 
-        if (this.isLoggedIn()) {
-            btnLogin.style.display = 'none';
-            btnLogout.style.display = 'block';
-            btnFavoritos.style.display = 'block';
-            
-            if (this.isAdmin()) {
+        if (this.currentUser) {
+            if (btnLogin) btnLogin.style.display = 'none';
+            if (btnLogout) {
+                btnLogout.style.display = 'block';
+                btnLogout.addEventListener('click', () => this.logout());
+            }
+            if (btnFavoritos) btnFavoritos.style.display = 'block';
+            if (btnCadastroItem && this.currentUser.admin) {
                 btnCadastroItem.style.display = 'block';
-            } else {
-                btnCadastroItem.style.display = 'none';
             }
         } else {
-            btnLogin.style.display = 'block';
-            btnLogout.style.display = 'none';
-            btnFavoritos.style.display = 'none';
-            btnCadastroItem.style.display = 'none';
+            if (btnLogin) btnLogin.style.display = 'block';
+            if (btnLogout) btnLogout.style.display = 'none';
+            if (btnFavoritos) btnFavoritos.style.display = 'none';
+            if (btnCadastroItem) btnCadastroItem.style.display = 'none';
         }
     }
 }

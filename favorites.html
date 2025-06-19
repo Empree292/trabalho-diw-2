@@ -43,19 +43,48 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main>
+    <!-- Main Content -->    <main>
         <div class="container py-5">
             <div class="row mb-4">
                 <div class="col">
-                    <h1 class="display-5 mb-3">Meus Lugares Favoritos</h1>
-                    <p class="text-muted" id="emptyMessage" style="display: none;">
-                        Você ainda não tem lugares favoritos. Explore nossos <a href="index.html">destinos turísticos</a> e marque seus favoritos!
-                    </p>
+                    <div class="d-flex align-items-center mb-3">
+                        <h1 class="display-5 mb-0">
+                            <i class="fas fa-heart text-danger me-2"></i>
+                            Meus Lugares Favoritos
+                        </h1>
+                        <a href="index.html" class="btn btn-outline-primary ms-auto">
+                            <i class="fas fa-search me-2"></i>
+                            Explorar Mais Lugares
+                        </a>
+                    </div>
+                    <div class="alert alert-info" id="emptyMessage" style="display: none;">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Você ainda não tem lugares favoritos. Explore nossos <a href="index.html" class="alert-link">destinos turísticos</a> e marque seus favoritos!
+                    </div>
                 </div>
             </div>
-            <div class="row" id="favoritesContainer">
+
+            <!-- Loading Spinner -->
+            <div id="loadingSpinner" class="text-center py-5" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Carregando...</span>
+                </div>
+                <p class="mt-2 text-muted">Carregando seus lugares favoritos...</p>
+            </div>
+
+            <div class="row g-4" id="favoritesContainer">
                 <!-- Favorite cards will be inserted here -->
+            </div>
+
+            <!-- No Results Message -->
+            <div id="noResults" class="text-center py-5" style="display: none;">
+                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                <h3>Nenhum resultado encontrado</h3>
+                <p class="text-muted">Tente procurar por outros lugares na página inicial.</p>
+                <a href="index.html" class="btn btn-primary">
+                    <i class="fas fa-home me-2"></i>
+                    Voltar para Página Inicial
+                </a>
             </div>
         </div>
     </main>
@@ -162,8 +191,9 @@
         </div>
     </div>
 
-    <!-- Welcome Toast -->
+    <!-- Toast Notifications -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <!-- Welcome Toast -->
         <div id="welcomeToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header bg-success text-white">
                 <i class="fas fa-check-circle me-2"></i>
@@ -171,6 +201,60 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
             </div>
             <div class="toast-body" id="welcomeMessage"></div>
+        </div>
+
+        <!-- Action Toast -->
+        <div id="actionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <i class="me-2 action-icon"></i>
+                <strong class="me-auto action-title">Notificação</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="actionMessage"></div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Confirmação
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="confirmationMessage">Tem certeza que deseja realizar esta ação?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-warning" id="confirmActionBtn">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal fade" id="errorModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Erro
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="errorMessage">Ocorreu um erro ao processar sua solicitação.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
         </div>
     </div>
 

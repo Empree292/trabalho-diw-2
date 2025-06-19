@@ -6,7 +6,8 @@
       "senha": "123",
       "nome": "Administrador do Sistema",
       "email": "admin@exemplo.com",
-      "admin": true
+      "admin": true,
+      "favorites": []
     },
     {
       "id": "287cb7e5-e097-4224-8bc7-b610c855e2b2",
@@ -14,7 +15,11 @@
       "senha": "123",
       "nome": "Usuário Comum",
       "email": "user@exemplo.com",
-      "admin": false
+      "admin": false,
+      "favorites": [
+        "1",
+        "2"
+      ]
     },
     {
       "nome": "Matheus Augusto Alves Goveia Damião",
@@ -22,7 +27,14 @@
       "email": "matheusaagd2@gmail.com",
       "senha": "2603Betim#2",
       "id": "343bcb59-8fab-4af4-abf7-d79ba538e835",
-      "admin": false
+      "admin": false,
+      "favorites": [
+        "1",
+        "2",
+        "8",
+        "3",
+        "9"
+      ]
     }
   ],
   "itens": [
@@ -84,7 +96,26 @@
       ],
       "endereco": "Av. Pasteur, 520 - Urca, Rio de Janeiro - RJ",
       "cidade": "Rio de Janeiro",
-      "estado": "RJ"
+      "estado": "RJ",
+      "avaliacao": 4.7,
+      "numeroAvaliacoes": 11000,
+      "melhorEpoca": "Abril a Outubro",
+      "clima": "Tropical litorâneo, temperaturas entre 20°C e 32°C",
+      "dicas": [
+        "Compre o ingresso do bondinho antecipado",
+        "Leve água e protetor solar",
+        "Aproveite o pôr do sol no topo"
+      ],
+      "infraestrutura": [
+        "Estacionamento",
+        "Lanchonete",
+        "Banheiros",
+        "Acessibilidade"
+      ],
+      "imagensAdicionais": [
+        "img/paodeacucar-2.jpg",
+        "img/paodeacucar-3.jpg"
+      ]
     },
     {
       "id": "3",
@@ -104,7 +135,26 @@
       ],
       "endereco": "Parque Nacional do Iguaçu - Foz do Iguaçu - PR",
       "cidade": "Foz do Iguaçu",
-      "estado": "PR"
+      "estado": "PR",
+      "avaliacao": 4.9,
+      "numeroAvaliacoes": 18000,
+      "melhorEpoca": "Agosto a Novembro",
+      "clima": "Subtropical úmido, temperaturas entre 15°C e 32°C",
+      "dicas": [
+        "Leve capa de chuva para o passeio de barco",
+        "Use tênis confortável",
+        "Reserve um dia inteiro para o passeio"
+      ],
+      "infraestrutura": [
+        "Centro de visitantes",
+        "Restaurantes",
+        "Banheiros",
+        "Estacionamento"
+      ],
+      "imagensAdicionais": [
+        "img/cataratas-2.jpg",
+        "img/cataratas-3.jpg"
+      ]
     },
     {
       "id": "4",
@@ -125,7 +175,26 @@
       ],
       "endereco": "R. das Laranjeiras, s/n - Pelourinho, Salvador - BA",
       "cidade": "Salvador",
-      "estado": "BA"
+      "estado": "BA",
+      "avaliacao": 4.6,
+      "numeroAvaliacoes": 9500,
+      "melhorEpoca": "Dezembro a Março",
+      "clima": "Tropical úmido, temperaturas entre 24°C e 32°C",
+      "dicas": [
+        "Aproveite as festas populares",
+        "Cuidado com pertences em áreas movimentadas",
+        "Experimente a culinária baiana"
+      ],
+      "infraestrutura": [
+        "Policiamento",
+        "Restaurantes",
+        "Lojas",
+        "Museus"
+      ],
+      "imagensAdicionais": [
+        "img/pelourinho-2.jpg",
+        "img/pelourinho-3.jpg"
+      ]
     },
     {
       "id": "5",
@@ -145,7 +214,26 @@
       ],
       "endereco": "Av. Eduardo Ribeiro, s/n - Centro, Manaus - AM",
       "cidade": "Manaus",
-      "estado": "AM"
+      "estado": "AM",
+      "avaliacao": 4.8,
+      "numeroAvaliacoes": 7000,
+      "melhorEpoca": "Junho a Setembro",
+      "clima": "Equatorial úmido, temperaturas entre 24°C e 34°C",
+      "dicas": [
+        "Verifique horários das visitas guiadas",
+        "Assista a um espetáculo se possível",
+        "Fotografe a cúpula colorida"
+      ],
+      "infraestrutura": [
+        "Guia turístico",
+        "Lanchonete",
+        "Banheiros",
+        "Acessibilidade"
+      ],
+      "imagensAdicionais": [
+        "img/teatroamazonas-2.jpg",
+        "img/teatroamazonas-3.jpg"
+      ]
     },
     {
       "id": "6",
@@ -166,7 +254,26 @@
       ],
       "endereco": "Centro Histórico, Ouro Preto - MG",
       "cidade": "Ouro Preto",
-      "estado": "MG"
+      "estado": "MG",
+      "avaliacao": 4.7,
+      "numeroAvaliacoes": 12000,
+      "melhorEpoca": "Maio a Agosto",
+      "clima": "Tropical de altitude, temperaturas entre 12°C e 26°C",
+      "dicas": [
+        "Use sapatos confortáveis para caminhar",
+        "Visite igrejas históricas",
+        "Aproveite a culinária mineira"
+      ],
+      "infraestrutura": [
+        "Guia turístico",
+        "Restaurantes",
+        "Lojas de artesanato",
+        "Museus"
+      ],
+      "imagensAdicionais": [
+        "img/ouropreto-2.jpg",
+        "img/ouropreto-3.jpg"
+      ]
     },
     {
       "id": "7",
