@@ -56,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <img src="${item.imagem}" class="card-img-top" alt="${item.nome}" 
                          style="height: 200px; object-fit: cover;">
                     <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 rounded-circle"
-                            onclick="event.stopPropagation();"
                             data-remove-id="${item.id}">
                         <i class="fas fa-times"></i>
                     </button>
@@ -94,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="col-md-6">
                     <img src="${item.imagem}" class="img-fluid rounded" alt="${item.nome}" 
                          style="width: 100%; height: 300px; object-fit: cover;">
-                    ${item.imagensAdicionais && item.imagensAdicionais.length > 0 ? `
+                    ${(item.imagensAdicionais && item.imagensAdicionais.length > 0) ? `
                         <div class="image-gallery mt-3 d-flex gap-2 overflow-auto">
                             ${item.imagensAdicionais.map(img => `
                                 <img src="${img}" alt="${item.nome}" 
@@ -108,15 +107,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h3>${item.nome}</h3>
                         <div class="rating text-warning">
-                            ${'★'.repeat(Math.floor(item.avaliacao))}${item.avaliacao % 1 >= 0.5 ? '½' : ''}
-                            <small class="text-muted">(${item.numeroAvaliacoes.toLocaleString()})</small>
+                            ${'★'.repeat(Math.floor(item.avaliacao || 0))}${item.avaliacao % 1 >= 0.5 ? '½' : ''}
+                            <small class="text-muted">(${item.numeroAvaliacoes ? item.numeroAvaliacoes.toLocaleString() : 0})</small>
                         </div>
                     </div>
                     <p class="text-muted">
                         <i class="fas fa-map-marker-alt me-2"></i>${item.endereco}
                     </p>
                     <p>${item.descricao}</p>
-                    
                     <div class="info-section mt-4">
                         <h5>Informações</h5>
                         <div class="row g-3">
@@ -150,11 +148,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         </div>
                     </div>
-
                     <div class="info-section mt-4">
                         <h5>Dicas para Visitantes</h5>
                         <div class="row">
-                            ${item.dicas.map(dica => `
+                            ${(item.dicas || []).map(dica => `
                                 <div class="col-12 mb-2">
                                     <div class="d-flex align-items-center">
                                         <i class="fas fa-check-circle text-success me-2"></i>
@@ -164,22 +161,20 @@ document.addEventListener('DOMContentLoaded', () => {
                             `).join('')}
                         </div>
                     </div>
-
                     <div class="info-section mt-4">
                         <h5>Infraestrutura</h5>
                         <div class="d-flex flex-wrap gap-2">
-                            ${item.infraestrutura.map(infra => `
+                            ${(item.infraestrutura || []).map(infra => `
                                 <span class="badge bg-light text-dark p-2">
                                     <i class="fas fa-check text-success me-1"></i>${infra}
                                 </span>
                             `).join('')}
                         </div>
                     </div>
-
                     <div class="info-section mt-4">
                         <h5>Atrações</h5>
                         <div class="row">
-                            ${item.atracoes.map(atracao => `
+                            ${(item.atracoes || []).map(atracao => `
                                 <div class="col-md-6 mb-2">
                                     <div class="d-flex align-items-center">
                                         <i class="fas fa-star text-warning me-2"></i>
@@ -189,16 +184,34 @@ document.addEventListener('DOMContentLoaded', () => {
                             `).join('')}
                         </div>
                     </div>
+                    <div class="mt-4 text-end">
+                        <button class="btn btn-outline-danger" id="btnRemoveFavoriteModal" data-remove-id="${item.id}">
+                            <i class="fas fa-heart-broken me-2"></i>Remover dos Favoritos
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
     };
+
+    // Evento para remover favorito pelo modal
+    itemDetailsContent.addEventListener('click', async (e) => {
+        const btn = e.target.closest('#btnRemoveFavoriteModal');
+        if (btn) {
+            const itemId = btn.getAttribute('data-remove-id');
+            await removeFavorite(itemId);
+            // Fecha o modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('itemDetailsModal'));
+            if (modal) modal.hide();
+        }
+    });
 
     // Remove um item dos favoritos
     const removeFavorite = async (itemId) => {
         const user = checkAuthentication();
         if (!user) return;
 
+        let removed = false;
         try {
             // Obtém o usuário atualizado
             const userResponse = await fetch(`/usuarios/${user.id}`);
@@ -219,12 +232,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Remove o card do DOM com animação
             const card = document.querySelector(`[data-item-id="${itemId}"]`);
             if (card) {
+                removed = true;
                 card.style.transition = 'all 0.3s ease';
                 card.style.opacity = '0';
                 card.style.transform = 'scale(0.8)';
                 setTimeout(() => {
                     card.remove();
-                    // Verifica se ainda existem favoritos
                     if (favoritesContainer.children.length === 0) {
                         emptyMessage.style.display = 'block';
                     }
@@ -245,7 +258,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Erro ao remover favorito:', error);
-            alert('Erro ao remover favorito. Tente novamente.');
+            if (!removed) {
+                alert('Erro ao remover favorito. Tente novamente.');
+            } else {
+                // Se já removeu visualmente, só loga o erro
+                console.warn('Remoção visual feita, mas houve erro de sincronização:', error);
+            }
         }
     };
 

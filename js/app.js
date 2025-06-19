@@ -425,8 +425,14 @@ function setupEventListeners() {
             const itemId = e.target.dataset.itemId;
             try {
                 const item = await getItemById(itemId);
+                if (!item || !item.id) {
+                    alert('Item não encontrado ou dados incompletos. ID: ' + itemId);
+                    console.error('Item retornado por getItemById:', item);
+                    return;
+                }
                 showItemDetails(item);
-                $('#itemDetailsModal').modal('show');
+                const modal = new bootstrap.Modal(document.getElementById('itemDetailsModal'));
+                modal.show();
             } catch (error) {
                 console.error('Erro ao carregar detalhes do item:', error);
                 alert('Erro ao carregar detalhes. Tente novamente.');

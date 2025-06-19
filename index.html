@@ -30,7 +30,10 @@
                         <a class="nav-link" href="#" id="btnFavoritos" style="display: none;">Favoritos</a>
                     </li>
                 </ul>
-                <div class="d-flex">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-outline-light me-2" id="btnToggleDarkMode" title="Alternar modo escuro/claro">
+                        <i class="fas fa-moon"></i>
+                    </button>
                     <button class="btn btn-outline-light" id="btnLogin">Login</button>
                     <button class="btn btn-outline-light ms-2" id="btnLogout" style="display: none;">Logout</button>
                 </div>
@@ -41,7 +44,7 @@
     <!-- Main Content -->
     <main>
         <!-- Carousel Section -->
-        <section class="carousel-section py-4">
+        <section class="carousel-section py-4 fade-in">
             <div class="container">
                 <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner">
@@ -58,9 +61,9 @@
         </section>
 
         <!-- Search and Cards Section -->
-        <section class="cards-section py-4 bg-light">
+        <section class="cards-section py-4 bg-light fade-in">
             <div class="container">
-                <div class="search-bar mb-4">
+                <div class="search-bar mb-4 slide-up">
                     <div class="input-group">
                         <input type="text" class="form-control" id="searchInput" placeholder="Pesquisar...">
                         <button class="btn btn-primary" id="searchButton">
@@ -75,7 +78,7 @@
         </section>
 
         <!-- Advanced Visualization Section -->
-        <section class="advanced-viz-section py-4">
+        <section class="advanced-viz-section py-4 fade-in">
             <div class="container">
                 <div id="mapContainer" style="height: 400px;">
                     <!-- Map will be inserted here -->
@@ -84,24 +87,17 @@
         </section>
 
         <!-- Author Info Section -->
-        <section class="author-section py-4 bg-light">
+        <section class="author-section py-4 bg-light fade-in">
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-md-4 text-center">
-                        <img src="img/author.jpg" alt="Autor" class="rounded-circle img-fluid mb-3" style="max-width: 200px;">
+                        <img src="img/author.jpg" alt="Autor" class="rounded-circle img-fluid mb-3 slide-up" style="max-width: 200px;">
                     </div>
                     <div class="col-md-8">
-                        <h2>Sobre o Autor</h2>
-                        <h3>Nome Completo</h3>
-                        <p class="minibio">Minibio do autor...</p>
-                        <p>Curso: Seu Curso</p>
-                        <p>Turma: Sua Turma</p>
-                        <div class="social-links">
-                            <a href="#" class="me-3"><i class="fab fa-github"></i></a>
-                            <a href="#" class="me-3"><i class="fab fa-linkedin"></i></a>
-                            <a href="#" class="me-3"><i class="fab fa-twitter"></i></a>
-                        </div>
-                    </div>
+                        <h2>Matheus Augusto Alves G Damião </h2>
+                        <p>Curso: Sistemas de Informação</p>
+                        
+                                        </div>
                 </div>
             </div>
         </section>
@@ -240,5 +236,29 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />    <!-- Custom JS -->
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
+    <script>
+    // Dark mode toggle
+    const btnToggleDarkMode = document.getElementById('btnToggleDarkMode');
+    function setDarkMode(enabled) {
+        if (enabled) {
+            document.body.classList.add('dark-mode');
+            localStorage.setItem('darkMode', '1');
+            btnToggleDarkMode.innerHTML = '<i class="fas fa-sun"></i>';
+            btnToggleDarkMode.title = 'Alternar para modo claro';
+        } else {
+            document.body.classList.remove('dark-mode');
+            localStorage.setItem('darkMode', '0');
+            btnToggleDarkMode.innerHTML = '<i class="fas fa-moon"></i>';
+            btnToggleDarkMode.title = 'Alternar para modo escuro';
+        }
+    }
+    btnToggleDarkMode.addEventListener('click', () => {
+        setDarkMode(!document.body.classList.contains('dark-mode'));
+    });
+    // Carregar preferência ao abrir
+    if (localStorage.getItem('darkMode') === '1') {
+        setDarkMode(true);
+    }
+    </script>
 </body>
 </html>
