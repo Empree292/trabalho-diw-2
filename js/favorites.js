@@ -1,3 +1,5 @@
+const API_BASE_URL = 'https://trabalho-diw-2.onrender.com';
+
 // Aguarda o DOM ser carregado
 document.addEventListener('DOMContentLoaded', () => {
     // Elementos do DOM
@@ -35,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Carrega os detalhes de um item específico
     const loadItemDetails = async (itemId) => {
         try {
-            const response = await fetch(`/itens/${itemId}`);
+            const response = await fetch(`${API_BASE_URL}/itens/${itemId}`);
             const item = await response.json();
             return item;
         } catch (error) {
@@ -214,14 +216,14 @@ document.addEventListener('DOMContentLoaded', () => {
         let removed = false;
         try {
             // Obtém o usuário atualizado
-            const userResponse = await fetch(`/usuarios/${user.id}`);
+            const userResponse = await fetch(`${API_BASE_URL}/usuarios/${user.id}`);
             const userData = await userResponse.json();
 
             // Remove o item dos favoritos (garantindo string)
             const updatedFavorites = (userData.favorites || []).map(String).filter(id => id !== String(itemId));
 
             // Atualiza os favoritos do usuário na API
-            await fetch(`/usuarios/${user.id}`, {
+            await fetch(`${API_BASE_URL}/usuarios/${user.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -278,11 +280,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Obtém o usuário atualizado
-            const userResponse = await fetch(`/usuarios/${user.id}`);
+            const userResponse = await fetch(`${API_BASE_URL}/usuarios/${user.id}`);
             const userData = await userResponse.json();
             
             // Carrega todos os itens para validar favoritos
-            const itensResponse = await fetch('/itens');
+            const itensResponse = await fetch(`${API_BASE_URL}/itens`);
             const allItens = await itensResponse.json();
             const validItemIds = new Set(allItens.map(i => String(i.id)));
 
@@ -291,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Se havia favoritos inválidos, atualiza backend e sessionStorage
             if (validFavorites.length !== (userData.favorites || []).length) {
-                await fetch(`/usuarios/${user.id}`, {
+                await fetch(`${API_BASE_URL}/usuarios/${user.id}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ favorites: validFavorites })

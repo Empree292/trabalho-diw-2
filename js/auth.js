@@ -1,3 +1,5 @@
+const API_BASE_URL = 'https://trabalho-diw-2.onrender.com';
+
 // Authentication Management
 class AuthManager {
     constructor() {
@@ -108,7 +110,7 @@ class AuthManager {
         }
     }    async login(username, password) {
         try {
-            const response = await fetch(`/usuarios?login=${username}`);
+            const response = await fetch(`${API_BASE_URL}/usuarios?login=${username}`);
             const users = await response.json();
             const user = users[0];
             
@@ -135,7 +137,7 @@ class AuthManager {
     async register(userData) {
         try {
             // Check if user already exists
-            const response = await fetch(`/usuarios?login=${userData.login}`);
+            const response = await fetch(`${API_BASE_URL}/usuarios?login=${userData.login}`);
             const existingUsers = await response.json();
             
             if (existingUsers.length > 0) {
@@ -150,7 +152,7 @@ class AuthManager {
                 favorites: []  // Initialize empty favorites array
             };
 
-            const createResponse = await fetch('/usuarios', {
+            const createResponse = await fetch(`${API_BASE_URL}/usuarios`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

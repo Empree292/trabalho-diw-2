@@ -9,23 +9,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // API functions
 async function getItems() {
-    const response = await fetch('/itens');
+    const response = await fetch(`${API_BASE_URL}/itens`);
     return await response.json();
 }
 
 async function getFeaturedItems() {
-    const response = await fetch('/itens?destaque=true');
+    const response = await fetch(`${API_BASE_URL}/itens?destaque=true`);
     return await response.json();
 }
 
 async function getItemById(id) {
-    const response = await fetch(`/itens/${id}`);
+    const response = await fetch(`${API_BASE_URL}/itens/${id}`);
     return await response.json();
 }
 
 async function getUserFavorites(userId) {
     try {
-        const response = await fetch(`/usuarios/${userId}`);
+        const response = await fetch(`${API_BASE_URL}/usuarios/${userId}`);
         const user = await response.json();
         return user.favorites || [];
     } catch (error) {
@@ -37,7 +37,7 @@ async function getUserFavorites(userId) {
 async function toggleFavoriteForUser(userId, itemId) {
     try {
         // Get current user data
-        const response = await fetch(`/usuarios/${userId}`);
+        const response = await fetch(`${API_BASE_URL}/usuarios/${userId}`);
         const user = await response.json();
         
         // Get current favorites
@@ -52,7 +52,7 @@ async function toggleFavoriteForUser(userId, itemId) {
         }
         
         // Update user favorites in API
-        await fetch(`/usuarios/${userId}`, {
+        await fetch(`${API_BASE_URL}/usuarios/${userId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',

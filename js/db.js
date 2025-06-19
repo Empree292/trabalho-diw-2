@@ -1,5 +1,6 @@
 // Database Configuration and API Endpoints
-const API_BASE_URL = 'http://localhost:3000';
+// Todas as requisições agora usam a URL do backend Render
+const API_BASE_URL = 'https://trabalho-diw-2.onrender.com';
 
 const db = {
     async getUsers() {
@@ -100,3 +101,7 @@ const db = {
         });
     }
 };
+
+// Exemplo de uso:
+// fetch(`${API_BASE_URL}/itens`)
+// fetch(`${API_BASE_URL}/usuarios/${userId}`)
